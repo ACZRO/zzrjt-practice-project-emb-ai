@@ -6,19 +6,22 @@ app = Flask("Sentiment Analyzer")
 
 @app.route("/sentimentAnalyzer")
 def sent_analyzer():
-    # Retrieve the text to analyze from the GET request
+    # Retrieve the text to analyze from the request arguments
     text_to_analyze = request.args.get('textToAnalyze')
 
-    # Call the sentiment_analyzer function to analyze the text
+    # Pass the text to the sentiment_analyzer function and store the response
     response = sentiment_analyzer(text_to_analyze)
 
-    # Assuming response is in JSON format, extract label and score
-    response_json = eval(response)  # Convert string to dict if needed
-    label = response_json['document']['label']
-    score = response_json['document']['score']
+    # Extract the label and score from the response
+    label = response['label']
+    score = response['score']
 
-    # Return a formatted string with the sentiment label and score
-    return "The given text has been identified as {label.split('_')[1]} with a score of {score}."
+    # Check if the label is None, indicating an error or invalid input
+    if label is None:
+        return "Invalid input! Try again."
+    else:
+        # Return a formatted string with the sentiment label and score
+        return "The given text has been identified as {} with a score of {}.".format(label.split('_')[1], score)
 
 @app.route("/")
 def render_index_page():
